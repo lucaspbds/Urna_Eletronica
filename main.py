@@ -1,6 +1,7 @@
 from tkinter import *
 from operator import itemgetter
 from tkinter import ttk
+from pygame import mixer, USEREVENT
 
 # Fazer o visor mostrar os números que o usuário está digitando
 # Contabilizar os votos (apuração dos votos)
@@ -16,6 +17,7 @@ Vamos usar essa estratégia para apurar os votos: https://www.youtube.com/watch?
 eleicao = dict()
 candidatos = list()
 ranking = dict()
+sound = 'efeito_sonoro/urna_eletronica.mp3'
 buttonfont = 'Arial 15 bold'
 buttonBackground = 'black'
 buttonForeground = 'white'
@@ -32,6 +34,14 @@ numbers = ''
 
 
 # Functions
+
+def som():
+    mixer.init()
+    mixer.music.load(sound)
+    mixer.music.play()
+    mixer.music.set_endevent(USEREVENT)
+
+
 def exibir(num):
     global numbers
     numbers = numbers + num
@@ -44,7 +54,7 @@ def limpar():
     valorTexto.set('')
 
 
-def apuracao(password):
+def apuracao():
     ranking = sorted(eleicao.items(), key=itemgetter(1), reverse=True)
     window.destroy()
     resultado = Tk()
@@ -57,7 +67,6 @@ def apuracao(password):
     for candidato in ranking:
         tree.insert('', END, values=candidato)
     resultado.mainloop()
-    print(ranking)
 
 
 def confirmarVoto():
@@ -65,9 +74,10 @@ def confirmarVoto():
     numeroCandidato = valorTexto.get()
     limpar()
     if numeroCandidato == password:
-        apuracao(numeroCandidato)
+        apuracao()
 
     else:
+        som()
         if numeroCandidato not in candidatos:
             candidatos.append(numeroCandidato)
             if numeroCandidato == '':
