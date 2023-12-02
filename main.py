@@ -1,4 +1,6 @@
 from tkinter import *
+from operator import itemgetter
+from tkinter import ttk
 
 # Fazer o visor mostrar os números que o usuário está digitando
 # Contabilizar os votos (apuração dos votos)
@@ -11,12 +13,15 @@ candidatos = []
 Vamos usar essa estratégia para apurar os votos: https://www.youtube.com/watch?v=cwrqIztaAwk
 """
 # - Digitar uma senha para desbloquear isso!
-
+eleicao = dict()
+candidatos = list()
+ranking = dict()
 buttonfont = 'Arial 15 bold'
 buttonBackground = 'black'
 buttonForeground = 'white'
 buttonWidth = 5
 buttonHeight = 2
+password = '26102006'
 
 window = Tk()
 window.title("Urna Eletrônica")
@@ -37,6 +42,43 @@ def limpar():
     global numbers
     numbers = ''
     valorTexto.set('')
+
+
+def apuracao(password):
+    ranking = sorted(eleicao.items(), key=itemgetter(1), reverse=True)
+    window.destroy()
+    resultado = Tk()
+    resultado.title("Resultado da eleição")
+    columns = ('Nº do Candidato', 'Quantidade de votos')
+    tree = ttk.Treeview(resultado, columns=columns, show='headings')
+    tree.heading('Nº do Candidato', text='Nº do Candidato')
+    tree.heading('Quantidade de votos', text='Quantidade de votos')
+    tree.grid(row=0, column=0)
+    for candidato in ranking:
+        tree.insert('', END, values=candidato)
+    resultado.mainloop()
+    print(ranking)
+
+
+def confirmarVoto():
+    global numeroCandidato
+    numeroCandidato = valorTexto.get()
+    limpar()
+    if numeroCandidato == password:
+        apuracao(numeroCandidato)
+
+    else:
+        if numeroCandidato not in candidatos:
+            candidatos.append(numeroCandidato)
+            if numeroCandidato == '':
+                eleicao['branco'] = 1
+            else:
+                eleicao[f"{numeroCandidato}"] = 1
+        else:
+            if numeroCandidato == '':
+                eleicao['branco'] += 1
+            else:
+                eleicao[f"{numeroCandidato}"] += 1
 
 
 # Frames
@@ -198,7 +240,8 @@ branco = Button(frameTeclado,
                 width=9,
                 height=2,
                 relief=RAISED,
-                overrelief=RIDGE)
+                overrelief=RIDGE,
+                command=lambda: confirmarVoto())
 branco.place(x=16, y=350)
 corrigir = Button(frameTeclado,
                   font='Arial 12 bold',
@@ -221,7 +264,8 @@ confirmar = Button(frameTeclado,
                    width=11,
                    height=2,
                    relief=RAISED,
-                   overrelief=RIDGE)
+                   overrelief=RIDGE,
+                   command=lambda: confirmarVoto())
 confirmar.place(x=250, y=350)
 
 window.mainloop()
