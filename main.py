@@ -3,17 +3,6 @@ from operator import itemgetter
 from tkinter import ttk
 from pygame import mixer, USEREVENT
 
-# Fazer o visor mostrar os números que o usuário está digitando
-# Contabilizar os votos (apuração dos votos)
-# Mostrar o raking ou quem ganhou a eleição e se teve empate mostrar.
-"""Criar uma lista para receber os números dos candidados para poder verificar se é um novo candidado ou não.
-Se for um candidato novo, vai ser colocado na lista e no dicionário com o contador. Se não for um novo candidato,
-vai ser só somado +1 no contador.
-eleicao = {}
-candidatos = []
-Vamos usar essa estratégia para apurar os votos: https://www.youtube.com/watch?v=cwrqIztaAwk
-"""
-# - Digitar uma senha para desbloquear isso!
 eleicao = dict()
 candidatos = list()
 ranking = dict()
@@ -26,6 +15,7 @@ buttonHeight = 2
 password = '26102006'
 
 window = Tk()
+mixer.init()
 window.title("Urna Eletrônica")
 window.geometry("940x470")
 
@@ -36,7 +26,6 @@ numbers = ''
 # Functions
 
 def som():
-    mixer.init()
     mixer.music.load(sound)
     mixer.music.play()
     mixer.music.set_endevent(USEREVENT)
